@@ -1,10 +1,12 @@
-import { computeEmbeddings, computeCosineSimilarity, TSourceObject, TTargetInterface } from "./utils";
+import { computeEmbeddings, computeClosestMatch, TJsonObject, flattenObject, unflattenObject } from "./utils";
 
 export class MapObject {
     private model: string;
     private similarityThreshold: number;
     private computeEmbeddings = computeEmbeddings;
-    private computeCosineSimilarity = computeCosineSimilarity;
+    private computeClosestMatch = computeClosestMatch;
+    private flattenObject = flattenObject;
+    private unflattenObject = unflattenObject;
 
     /**
      * 
@@ -20,9 +22,28 @@ export class MapObject {
      * 
      * @param source - the JSON source object.
      * @param target - the interface to map the source object to.
-     * @returns {any} TODO
+     * @returns {TJsonObject} TODO
      */
-    async mapObject(source: TSourceObject, target: TTargetInterface): Promise<any> {
-        
+    async mapObject(source: TJsonObject, target: TJsonObject): Promise<TJsonObject> {
+        const flatSourceObj = this.flattenObject(source);
+        const flatTargetObj = this.flattenObject(target);
+        const sourceKeys = Object.keys(flatSourceObj);
+        const targetKeys = Object.keys(flatTargetObj);
+        const sourceEmbeddings = await this.computeEmbeddings(sourceKeys, this.model);
+        const targetEmbeddings = await this.computeEmbeddings(targetKeys, this.model);
+
+        const flatResult: TJsonObject = {}
+        for (let i = 0; i < sourceKeys.length; i++) {
+            const sourceKey = sourceKeys[i];
+            const sourceEmbedding: number[] = sourceEmbeddings[i];
+            const closestTargetIndex = this.computeClosestMatch(sourceEmbedding, targetEmbeddings, this.similarityThreshold);
+
+            if (closestTargetIndex !== null) {
+                const closestTargetKey = targetKeys[closestTargetIndex];
+                flatResult[closestTargetKey] = flatSourceObj[sourceKey];
+            }
+        }
+
+        return this.unflattenObject(flatResult);
     }
 }
