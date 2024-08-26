@@ -18,7 +18,14 @@
     "url": "https://github.com/danmxli/JShaper/issues"
   },
   "homepage": "https://github.com/danmxli/JShaper#readme",
-  "description": "",
+  "description": "Semantic object mapper written in TypeScript.",
+  "keywords": [
+    "objects",
+    "map",
+    "feature-extraction",
+    "embeddings",
+    "semantic"
+  ],
   "devDependencies": {
     "@types/node": "^22.5.0",
     "@types/xml2js": "^0.4.14",
