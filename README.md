@@ -1,5 +1,3 @@
-    
-
 # JShaper
 
 JShaper is a Typescript library that maps source data to a target object using textual feature extraction. To match keys between objects, the cosine similarity of each source embedding to target embeddings is computed.
@@ -7,6 +5,12 @@ JShaper is a Typescript library that maps source data to a target object using t
 Source data in JSON and XML file formats are only accepted.
 
 ## Installation
+
+Npm: install the [jshaper](https://www.npmjs.com/package/jshaper) package
+
+```bash
+npm i jshaper
+```
 
 Github: clone the repository and install the necessary dependencies
 
@@ -19,7 +23,7 @@ npm install
 ## Usage
 
 ```typescript
-import { MapObject } from ".";
+import { MapObject } from "jshaper";
 import exampleJson from "./example.json"
 import * as fs from "fs";
 
@@ -45,7 +49,7 @@ async function main() {
         bookauthor: '',
         bookyear: '',
     }
-    
+  
     const objectMapper = new MapObject()
     const mappedJsonData = await objectMapper.mapObject(exampleJson, jsonMapTarget)
     console.log(mappedJsonData)
@@ -54,7 +58,7 @@ async function main() {
         if (err) {
             throw err;
         }
-        
+      
         const mappedXmlData = await objectMapper.mapObject(data, xmlMapTarget)
         console.log(mappedXmlData)
     });
