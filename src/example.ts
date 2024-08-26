@@ -1,26 +1,9 @@
 import { MapObject } from ".";
+import exampleJson from "./example.json"
+import * as fs from "fs";
 
-/**
- * example use case of MapObject
- */
 async function main() {
-    const sourceObj = {
-        userDetails: {
-            name: 'Alice Johnson',
-            emailAddress: 'alice@example.com'
-        },
-        phoneNumber: '123-456-7890',
-        location: {
-            streetName: 'Oak St',
-            postalCode: 98765
-        },
-        settings: {
-            receiveNewsletter: true,
-            enableNotifications: true
-        }
-    };
-
-    const targetObj = {
+    const jsonMapTarget = {
         username: '',
         email: '',
         contact: {
@@ -36,9 +19,24 @@ async function main() {
         }
     };
 
+    const xmlMapTarget = {
+        booktitle: '',
+        bookauthor: '',
+        bookyear: '',
+    }
+
     const objectMapper = new MapObject()
-    const res = await objectMapper.mapObject(sourceObj, targetObj)
-    console.log(res)
+    const mappedJsonData = await objectMapper.mapObject(exampleJson, jsonMapTarget)
+    console.log(mappedJsonData)
+
+    fs.readFile(__dirname + '/example.xml', async function read(err, data) {
+        if (err) {
+            throw err;
+        }
+
+        const mappedXmlData = await objectMapper.mapObject(data, xmlMapTarget)
+        console.log(mappedXmlData)
+    });
 }
 
 main();

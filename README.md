@@ -2,7 +2,9 @@
 
 # JShaper
 
-JShaper is a Typescript library that maps source data to a target JSON object using textual feature extraction. To match keys between objects, the cosine similarity of each source embedding to target embeddings is computed.
+JShaper is a Typescript library that maps source data to a target object using textual feature extraction. To match keys between objects, the cosine similarity of each source embedding to target embeddings is computed.
+
+Source data in JSON and XML file formats are only accepted.
 
 ## Installation
 
@@ -18,28 +20,11 @@ npm install
 
 ```typescript
 import { MapObject } from ".";
+import exampleJson from "./example.json"
+import * as fs from "fs";
 
-/**
- * example use case of MapObject
- */
 async function main() {
-    const sourceObj = {
-        userDetails: {
-            name: 'Alice Johnson',
-            emailAddress: 'alice@example.com'
-        },
-        phoneNumber: '123-456-7890',
-        location: {
-            streetName: 'Oak St',
-            postalCode: 98765
-        },
-        settings: {
-            receiveNewsletter: true,
-            enableNotifications: true
-        }
-    };
-
-    const targetObj = {
+    const jsonMapTarget = {
         username: '',
         email: '',
         contact: {
@@ -55,9 +40,24 @@ async function main() {
         }
     };
 
+    const xmlMapTarget = {
+        booktitle: '',
+        bookauthor: '',
+        bookyear: '',
+    }
+    
     const objectMapper = new MapObject()
-    const res = await objectMapper.mapObject(sourceObj, targetObj)
-    console.log(res)
+    const mappedJsonData = await objectMapper.mapObject(exampleJson, jsonMapTarget)
+    console.log(mappedJsonData)
+
+    fs.readFile(__dirname + '/example.xml', async function read(err, data) {
+        if (err) {
+            throw err;
+        }
+        
+        const mappedXmlData = await objectMapper.mapObject(data, xmlMapTarget)
+        console.log(mappedXmlData)
+    });
 }
 
 main();
@@ -69,6 +69,11 @@ main();
 //     address: { street: 'Oak St', zipCode: 98765 }
 //   },
 //   preferences: { newsletter: true, notifications: true }
+// }
+// {
+//   booktitle: 'The Great Gatsby',
+//   bookauthor: 'F. Scott Fitzgerald',
+//   bookyear: '1925'
 // }
 ```
 
@@ -92,8 +97,8 @@ new MapObject(model?: string, similarityThreshold?: number): MapObject
 ```typescript
 /**
  * 
- * @param source - the JSON source object.
- * @param target - the JSON target object that the source object maps to.
+ * @param source - the source object. Supports JSON and XML file formats.
+ * @param target - the target object that the source maps to.
  * @returns {TJsonObject} the target object with populated values from source.
  */
 async mapObject(source: TJsonObject, target: TJsonObject): Promise<TJsonObject>
@@ -114,6 +119,12 @@ The text embeddings of the flattened source and target keys are computed using t
 By computing the cosine similarity of embeddings, it determines which key in the flattened target object is most semantically similar to each key in the flattened source object.
 
 The value from the source object is mapped to the matching key in the target object if the similarity score is higher than the threshold.
+
+## Dependencies
+
+[@xenova/transformers](https://www.npmjs.com/package/@xenova/transformers)
+
+[xml2js](https://www.npmjs.com/package/xml2js)
 
 ## License
 

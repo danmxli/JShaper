@@ -36,6 +36,33 @@ export function computeClosestMatch(sourceEmbedding: number[], targetEmbeddings:
     return maxSimilarity >= similarityThreshold ? closestIndex : null;
 }
 
+export function createDefaultObject<T extends object>(interfaceStructure: T): T {
+    const result: any = {};
+
+    for (const key in interfaceStructure) {
+        const value = interfaceStructure[key];
+        if (typeof value === 'object' && value !== null) {
+            result[key] = createDefaultObject(value);
+        } else {
+            switch (typeof value) {
+                case 'string':
+                    result[key] = '';
+                    break;
+                case 'number':
+                    result[key] = 0;
+                    break;
+                case 'boolean':
+                    result[key] = false;
+                    break;
+                default:
+                    result[key] = null;
+            }
+        }
+    }
+
+    return result as T;
+}
+
 export function flattenObject(obj: TJsonObject, prefix = ''): TJsonObject {
     return Object.keys(obj).reduce((acc: TJsonObject, k) => {
         const pre = prefix.length ? prefix + '.' : '';

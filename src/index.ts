@@ -1,4 +1,5 @@
 import { computeEmbeddings, computeClosestMatch, TJsonObject, flattenObject, unflattenObject } from "./utils";
+import * as xml2js from 'xml2js';
 
 export class MapObject {
     private model: string;
@@ -20,12 +21,32 @@ export class MapObject {
 
     /**
      * 
-     * @param source - the JSON source object.
-     * @param target - the JSON target object that the source object maps to.
+     * @param source - the source object. Supports JSON and XML file formats.
+     * @param target - the target object that the source maps to.
      * @returns {TJsonObject} the target object with populated values from source.
      */
-    async mapObject(source: TJsonObject, target: TJsonObject): Promise<TJsonObject> {
-        const flatSourceObj = this.flattenObject(source);
+    async mapObject(source: TJsonObject | Buffer, target: any): Promise<TJsonObject> {
+
+        let sourceJson: TJsonObject
+
+        if (Buffer.isBuffer(source)) {
+            const parser = new xml2js.Parser({ explicitArray: false });
+
+            sourceJson = await new Promise<TJsonObject>((resolve, reject) => {
+                parser.parseString(source, (err, result) => {
+                    if (err) {
+                        console.error('Error parsing XML:', err);
+                        reject(err);
+                    } else {
+                        resolve(result as TJsonObject);
+                    }
+                });
+            });
+        } else {
+            sourceJson = source;
+        }
+        
+        const flatSourceObj = this.flattenObject(sourceJson);
         const flatTargetObj = this.flattenObject(target);
         const sourceKeys = Object.keys(flatSourceObj);
         const targetKeys = Object.keys(flatTargetObj);
