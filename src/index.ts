@@ -21,8 +21,8 @@ export class MapObject {
     /**
      * 
      * @param source - the JSON source object.
-     * @param target - the interface to map the source object to.
-     * @returns {TJsonObject} TODO
+     * @param target - the JSON target object that the source object maps to.
+     * @returns {TJsonObject} the target object with populated values from source.
      */
     async mapObject(source: TJsonObject, target: TJsonObject): Promise<TJsonObject> {
         const flatSourceObj = this.flattenObject(source);
