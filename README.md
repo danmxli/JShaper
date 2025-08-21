@@ -1,5 +1,9 @@
 # JShaper
 
+## Author message
+
+Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+
 JShaper is a Typescript library that maps source data to a target object using textual feature extraction. To match keys between objects, the cosine similarity of each source embedding to target embeddings is computed.
 
 Source data in JSON and XML file formats are only accepted.
